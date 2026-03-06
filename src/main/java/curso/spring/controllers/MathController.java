@@ -1,6 +1,8 @@
 package curso.spring.controllers;
 
 import curso.spring.exceptions.UnsupportedMathOperationException;
+import curso.spring.math.SimpleMath;
+import curso.spring.request.NumberConverters;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,32 +11,63 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/math")
 public class MathController {
 
+    public SimpleMath simpleMath;
+
+    public MathController(SimpleMath simpleMath){
+        this.simpleMath = simpleMath;
+    }
+
     //http:localhost:8080/math/sum/3/5
     @RequestMapping(value= "/sum/{number1}/{number2}")
     public Double sum(
             @PathVariable("number1") String number1,
             @PathVariable("number2") String number2
-    ) throws IllegalArgumentException {
-            if (!isNumeric(number1) || !isNumeric(number2)) throw new UnsupportedMathOperationException("Please set a numeric value!");
-            return convertToDouble(number1) + convertToDouble(number2);
+    ) throws Exception {
+            if (!NumberConverters.isNumeric(number1) || (!NumberConverters.isNumeric(number2))) throw new UnsupportedMathOperationException("Please set a numeric value!");
+            return simpleMath.sum(NumberConverters.convertToDouble(number1), NumberConverters.convertToDouble(number2));
     }
 
-    private Double convertToDouble(String strNumber) throws IllegalArgumentException {
-
-        if(strNumber == null || strNumber.isEmpty()) throw new UnsupportedMathOperationException("Please set a numeric value!");
-        String number = strNumber.replace(",", ".");
-        return Double.parseDouble(number);
+    @RequestMapping(value= "/sub/{number1}/{number2}")
+    public Double sub(
+            @PathVariable("number1") String number1,
+            @PathVariable("number2") String number2
+    ) throws Exception {
+        if (!NumberConverters.isNumeric(number1) || (!NumberConverters.isNumeric(number2))) throw new UnsupportedMathOperationException("Please set a numeric value!");
+        return simpleMath.sub(NumberConverters.convertToDouble(number1), NumberConverters.convertToDouble(number2));
     }
 
-    private boolean isNumeric(String strNumber) {
-        if(strNumber == null || strNumber.isEmpty()) return false;
-        String number = strNumber.replace(",", ".");
-        return number.matches("[-+]?[0-9]*\\.?[0-9]+");
-
+    @RequestMapping(value= "/mult/{number1}/{number2}")
+    public Double mult(
+            @PathVariable("number1") String number1,
+            @PathVariable("number2") String number2
+    ) throws Exception {
+        if (!NumberConverters.isNumeric(number1) || (!NumberConverters.isNumeric(number2))) throw new UnsupportedMathOperationException("Please set a numeric value!");
+        return simpleMath.mult(NumberConverters.convertToDouble(number1), NumberConverters.convertToDouble(number2));
     }
 
+    @RequestMapping(value= "/div/{number1}/{number2}")
+    public Double div(
+            @PathVariable("number1") String number1,
+            @PathVariable("number2") String number2
+    ) throws Exception {
+        if (!NumberConverters.isNumeric(number1) || (!NumberConverters.isNumeric(number2))) throw new UnsupportedMathOperationException("Please set a numeric value!");
+        return simpleMath.div(NumberConverters.convertToDouble(number1), NumberConverters.convertToDouble(number2));
+    }
 
-    //http:localhost:8080/math/sub/3/5
-    //http:localhost:8080/math/div/3/5
-    //http:localhost:8080/math/multi/3/5
+    @RequestMapping(value= "/avg/{number1}/{number2}")
+    public Double avg(
+            @PathVariable("number1") String number1,
+            @PathVariable("number2") String number2
+    ) throws Exception {
+        if (!NumberConverters.isNumeric(number1) || (!NumberConverters.isNumeric(number2))) throw new UnsupportedMathOperationException("Please set a numeric value!");
+        return simpleMath.avg(NumberConverters.convertToDouble(number1), NumberConverters.convertToDouble(number2));
+    }
+
+    @RequestMapping(value= "/raiz/{number1}")
+    public Double raiz(
+            @PathVariable("number1") String number1
+    ) throws Exception {
+        if (!NumberConverters.isNumeric(number1)) throw new UnsupportedMathOperationException("Please set a numeric value!");
+        return simpleMath.raiz((NumberConverters.convertToDouble(number1)));
+    }
 }
